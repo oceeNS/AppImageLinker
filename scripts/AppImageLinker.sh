@@ -4,19 +4,23 @@ DIRS=(
     "$HOME/AppImages"
 )
 
-inotifywait -m -e create -e moved_to --format "%w%f" "${DIRS[@]}" | while read -r NEW_FILE
+inotifywait -m -e create -e moved_to -e delete -e moved_from --format "%e %w%f" "${DIRS[@]}" | while read -r EVENTS TARGET_FILE
 do
-    if [[ "${NEW_FILE,,}" == *.appimage ]]; then
-            echo "[$(date +'%Y-%m-%d %H:%M:%S')] New AppImage detected: $NEW_FILE"
+
+    if [[ "${TARGET_FILE,,}" == *.appimage ]]; then
+        
+        # Prepariamo in anticipo le variabili comuni
+        FILE_NAME=$(basename "$TARGET_FILE")
+        APP_NAME="${FILE_NAME%.*}"
+        
+        DIR_DESKTOP="$HOME/.local/share/applications"
+        DIR_ICONS="$HOME/.local/share/icons"
+        DESKTOP_FILE="$DIR_DESKTOP/${APP_NAME}.desktop"
+
+        if [[ "$EVENTS" == *"CREATE"* ]] || [[ "$EVENTS" == *"MOVED_TO"* ]]; then
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] Nuova AppImage rilevata: $TARGET_FILE"
             
-            chmod +x "$NEW_FILE"
-            
-            FILE_NAME=$(basename "$NEW_FILE")
-            APP_NAME="${FILE_NAME%.*}"
-            
-            DIR_DESKTOP="$HOME/.local/share/applications"
-            DIR_ICONS="$HOME/.local/share/icons"
-            DESKTOP_FILE="$DIR_DESKTOP/${APP_NAME}.desktop"
+            chmod +x "$TARGET_FILE"
             
             mkdir -p "$DIR_DESKTOP" "$DIR_ICONS"
             
@@ -26,10 +30,9 @@ do
             TEMP_DIR=$(mktemp -d)
             
             pushd "$TEMP_DIR" > /dev/null
-            "$NEW_FILE" --appimage-extract > /dev/null 2>&1
+            "$TARGET_FILE" --appimage-extract > /dev/null 2>&1
             
             if [ -d "squashfs-root" ]; then
-
                 if [ -e "squashfs-root/.DirIcon" ]; then
                     ICON_SRC="squashfs-root/.DirIcon"
                 else
@@ -46,9 +49,7 @@ do
                 ORIGINAL_DESKTOP=$(find squashfs-root -maxdepth 1 -name "*.desktop" | head -n 1)
                 
                 if [ -n "$ORIGINAL_DESKTOP" ]; then
-
                     EXTRACTED_CATEGORY=$(grep -m 1 "^Categories=" "$ORIGINAL_DESKTOP" | cut -d'=' -f2-)
-                    
                     if [ -n "$EXTRACTED_CATEGORY" ]; then
                         APP_CATEGORY="$EXTRACTED_CATEGORY"
                     fi
@@ -61,15 +62,30 @@ do
 cat <<EOF > "$DESKTOP_FILE"
 [Desktop Entry]
 Name=$APP_NAME
-Exec="$NEW_FILE"
+Exec="$TARGET_FILE"
 Icon=$ICON_NAME
 Type=Application
 Terminal=false
 Categories=$APP_CATEGORY
 EOF
 
-            echo "File .desktop created in: $DESKTOP_FILE (Category: $APP_CATEGORY)"
-            
+            echo "File .desktop creato in: $DESKTOP_FILE (Category: $APP_CATEGORY)"
             update-desktop-database "$DIR_DESKTOP" 2>/dev/null || xdg-desktop-menu forceupdate
+
+        elif [[ "$EVENTS" == *"DELETE"* ]] || [[ "$EVENTS" == *"MOVED_FROM"* ]]; then
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] AppImage rimossa: $TARGET_FILE"
+            
+            # Rimuoviamo il file .desktop se esiste
+            if [ -f "$DESKTOP_FILE" ]; then
+                rm "$DESKTOP_FILE"
+                echo "File .desktop eliminato: $DESKTOP_FILE"
+            fi
+            
+            # (Opzionale ma consigliato) Puliamo anche l'icona estratta in precedenza
+            rm -f "$DIR_ICONS/${APP_NAME}".{png,svg,xpm} 2>/dev/null
+            
+            # Aggiorniamo il database per far sparire immediatamente l'app dal menu
+            update-desktop-database "$DIR_DESKTOP" 2>/dev/null || xdg-desktop-menu forceupdate
+        fi
     fi
 done
