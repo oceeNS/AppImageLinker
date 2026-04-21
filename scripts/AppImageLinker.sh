@@ -1,15 +1,21 @@
 #!/bin/bash
 
-DIRS=(
-    "$HOME/AppImages"
-)
+CONFIG_FILE="$HOME/AppImageLinker/config/appimage-dirs.conf"
+
+if [[ -f "$CONFIG_FILE" ]]; then
+    source "$CONFIG_FILE"
+else
+    echo "Errore: File di configurazione non trovato in $CONFIG_FILE"
+    exit 1
+fi
+
+mkdir -p "$DIRS"
 
 inotifywait -m -e create -e moved_to -e delete -e moved_from --format "%e %w%f" "${DIRS[@]}" | while read -r EVENTS TARGET_FILE
 do
 
     if [[ "${TARGET_FILE,,}" == *.appimage ]]; then
         
-        # Prepariamo in anticipo le variabili comuni
         FILE_NAME=$(basename "$TARGET_FILE")
         APP_NAME="${FILE_NAME%.*}"
         
@@ -81,10 +87,8 @@ EOF
                 echo "File .desktop eliminato: $DESKTOP_FILE"
             fi
             
-            # (Opzionale ma consigliato) Puliamo anche l'icona estratta in precedenza
             rm -f "$DIR_ICONS/${APP_NAME}".{png,svg,xpm} 2>/dev/null
             
-            # Aggiorniamo il database per far sparire immediatamente l'app dal menu
             update-desktop-database "$DIR_DESKTOP" 2>/dev/null || xdg-desktop-menu forceupdate
         fi
     fi
