@@ -1,9 +1,9 @@
 [Unit]
-Description=A Linker for AppImages
+Description=AppImageLinker daemon
 After=default.target
 
 [Service]
-ExecStart=/home/nico/AppImageLinker/scripts/AppImageLinker.sh
+ExecStart=/usr/local/bin/AppImageLinker/scripts/AppImageLinker.sh
 Restart=always
 RestartSec=3
 

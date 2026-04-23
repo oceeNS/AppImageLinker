@@ -52,13 +52,10 @@ else
 fi
 
 echo "Dependecies met. Installing..."
-
-chmod +x scripts/AppImageLinker.sh
-
-mkdir -p $HOME/.config/systemd/user
-cp config/appimage-linker.service $HOME/.config/systemd/user
-
+sudo cp -r $PWD /usr/local/bin/ && sudo chown $USER:$USER /usr/local/bin/AppImageLinker
+cp config/appimage-linker.service $HOME/.config/systemd/user/
 systemctl --user daemon-reload
 systemctl --user enable --now appimage-linker.service
 
-echo "AppImageLinker successfully installed!"
+echo "All done!"
+echo "You can now delete this directory."
