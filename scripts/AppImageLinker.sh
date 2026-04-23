@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONFIG_FILE="/usr/local/bin/AppImageLinker/config/appimage-dirs.conf"
+CONFIG_FILE="$HOME/.config/AppImageLinker/appimage-dirs.conf"
 
 if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"

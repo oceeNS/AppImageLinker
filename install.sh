@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# This script is used to install the AppImageLinker
+if [ "$EUID" -eq 0 ]; then
+  echo "ERROR: Do not run this script as root or with sudo." >&2
+  exit 1
+fi
 
-#if [ "$EUID" -ne 0 ]
-#  then echo "Please run as root"
-#  exit
-#fi
+# This script is used to install the AppImageLinker
 
 echo "Installing AppImageLinker"
 
@@ -54,6 +54,8 @@ fi
 echo "Dependecies met. Installing..."
 sudo cp -r $PWD /usr/local/bin/ && sudo chown $USER:$USER /usr/local/bin/AppImageLinker
 cp config/appimage-linker.service $HOME/.config/systemd/user/
+mkdir -p $HOME/.config/AppImageLinker
+cp config/appimage-dirs.conf $HOME/.config/AppImageLinker/appimage-dirs.conf
 systemctl --user daemon-reload
 systemctl --user enable --now appimage-linker.service
 
