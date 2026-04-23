@@ -5,7 +5,7 @@ CONFIG_FILE="$HOME/AppImageLinker/config/appimage-dirs.conf"
 if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
 else
-    echo "Errore: File di configurazione non trovato in $CONFIG_FILE"
+    echo "[ERRORE] Configuration file not found: $CONFIG_FILE"
     exit 1
 fi
 
