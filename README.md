@@ -14,6 +14,18 @@ By monitoring specific directories for changes, it automatically creates `.deskt
 
 AppImageLinker requires `inotify-tools` to monitor directory changes. The installation script will automatically attempt to install this dependency using your system's package manager (`apt`, `dnf`, or `pacman`).
 
+## Configuration
+
+By default, the service monitors the `$HOME/AppImages` directory. You can add custom directories to be monitored by editing the configuration file located at:
+
+`$HOME/.config/AppImageLinker/appimage-dirs.conf`
+
+Simply add the paths to your desired directories within the `DIRS=( ... )` array. After making changes, you must restart the service for them to take effect by running:
+   ```bash
+   systemctl --user restart appimage-linker.service
+   ```
+
+
 ## Installation
 
 1. Clone or download this repository.
@@ -22,6 +34,7 @@ AppImageLinker requires `inotify-tools` to monitor directory changes. The instal
    ```bash
    chmod +x install.sh
    ./install.sh
+   ```
 
 ## Uninstallation
 
@@ -33,5 +46,6 @@ AppImageLinker requires `inotify-tools` to monitor directory changes. The instal
    ```bash
    chmod +x uninstall.sh
    ./uninstall.sh
+   ```
 
 Note: If you can't find the uninstall script, you can simply download it from the repository and run it manually (it doesn't matter where you run it from).
