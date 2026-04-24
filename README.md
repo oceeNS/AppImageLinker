@@ -38,7 +38,7 @@ Simply add the paths to your desired directories within the `DIRS=( ... )` array
 
 ## Uninstallation
 
-1. You can either move to AppImageLinker's directory by typing
+1. Navigate to AppImageLinker's directory by typing:
    ```bash
    cd /usr/local/bin/AppImageLinker
    ```
