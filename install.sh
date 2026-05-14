@@ -52,7 +52,7 @@ else
 fi
 
 echo "Dependecies met. Installing..."
-sudo cp -r $PWD /usr/local/bin/ && sudo chown $USER:$USER /usr/local/bin/AppImageLinker
+sudo cp -r $PWD /usr/local/bin/AppImageLinker && sudo chown $USER:$USER /usr/local/bin/AppImageLinker
 mkdir -p $HOME/.config/systemd/user/
 cp config/appimage-linker.service $HOME/.config/systemd/user/
 mkdir -p $HOME/.config/AppImageLinker
