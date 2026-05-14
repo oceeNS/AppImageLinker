@@ -49,3 +49,8 @@ Simply add the paths to your desired directories within the `DIRS=( ... )` array
    ```
 
 Note: If you can't find the uninstall script, you can simply download it from the repository and run it manually (it doesn't matter where you run it from).
+
+
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the LICENSE file for details.
