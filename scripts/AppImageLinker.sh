@@ -32,6 +32,8 @@ do
             
             ICON_NAME="application-x-executable"
             APP_CATEGORY="Utility;"
+
+            DISPLAY_NAME="$APP_NAME"
             
             TEMP_DIR=$(mktemp -d)
             
@@ -55,9 +57,14 @@ do
                 ORIGINAL_DESKTOP=$(find squashfs-root -maxdepth 1 -name "*.desktop" | head -n 1)
                 
                 if [ -n "$ORIGINAL_DESKTOP" ]; then
-                    EXTRACTED_CATEGORY=$(grep -m 1 "^Categories=" "$ORIGINAL_DESKTOP" | cut -d'=' -f2-)
+                    EXTRACTED_CATEGORY=$(grep -m 1 "^Categories=" "$ORIGINAL_DESKTOP" | cut -d'=' -f2- | tr -d '\r')
                     if [ -n "$EXTRACTED_CATEGORY" ]; then
                         APP_CATEGORY="$EXTRACTED_CATEGORY"
+                    fi
+                    
+                    EXTRACTED_NAME=$(grep -m 1 "^Name=" "$ORIGINAL_DESKTOP" | cut -d'=' -f2- | tr -d '\r')
+                    if [ -n "$EXTRACTED_NAME" ]; then
+                        DISPLAY_NAME="$EXTRACTED_NAME"
                     fi
                 fi
             fi
@@ -67,7 +74,7 @@ do
             
 cat <<EOF > "$DESKTOP_FILE"
 [Desktop Entry]
-Name=$APP_NAME
+Name=$DISPLAY_NAME
 Exec="$TARGET_FILE"
 Icon=$ICON_NAME
 Type=Application
@@ -75,13 +82,12 @@ Terminal=false
 Categories=$APP_CATEGORY
 EOF
 
-            echo "File .desktop creato in: $DESKTOP_FILE (Category: $APP_CATEGORY)"
+            echo "File .desktop creato in: $DESKTOP_FILE (Name: $DISPLAY_NAME, Category: $APP_CATEGORY)"
             update-desktop-database "$DIR_DESKTOP" 2>/dev/null || xdg-desktop-menu forceupdate
 
         elif [[ "$EVENTS" == *"DELETE"* ]] || [[ "$EVENTS" == *"MOVED_FROM"* ]]; then
             echo "[$(date +'%Y-%m-%d %H:%M:%S')] AppImage rimossa: $TARGET_FILE"
             
-            # Rimuoviamo il file .desktop se esiste
             if [ -f "$DESKTOP_FILE" ]; then
                 rm "$DESKTOP_FILE"
                 echo "File .desktop eliminato: $DESKTOP_FILE"

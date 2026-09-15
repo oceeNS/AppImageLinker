@@ -6,7 +6,7 @@ By monitoring specific directories for changes, it automatically creates `.deskt
 
 ## Features
 * **Automatic Integration**: Seamlessly adds AppImages to your application launcher.
-* **Icon & Category Support**: Extracts the native icon and application category directly from the AppImage's internal squashfs.
+* **Name, Icon & Category Support**: Extracts the native name, icon and application category directly from the AppImage's internal squashfs.
 * **Real-time Monitoring**: Uses `inotify-tools` to instantly detect when AppImages are added, moved, or deleted.
 * **User-Space Daemon**: Runs safely as a systemd user service without requiring root privileges for daily operation.
 
