@@ -44,7 +44,17 @@ elif command -v pacman &> /dev/null; then
         sudo pacman -Sy --noconfirm "$PACKAGE_NAME"
     fi
 
-# 4. FALLBACK (OS NON SUPPORTATO)
+# 4. openSUSE
+elif command -v zypper &> /dev/null; then
+
+    if rpm -q "$PACKAGE_NAME" &> /dev/null; then
+        echo "[OK] $PACKAGE_NAME already installed."
+    else
+        echo "[INFO] $PACKAGE_NAME not found. Attempting to install using zypper..."
+        sudo zypper install -y "$PACKAGE_NAME"
+    fi
+
+# 0. FALLBACK (OS NON SUPPORTATO)
 else
     echo "[ERRORE] Unknown package manager found."
     echo "Please, install '$PACKAGE_NAME' manually using your package manager before running this script."

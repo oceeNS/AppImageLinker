@@ -1,20 +1,24 @@
-# AppImageLinker
+# 📦 AppImageLinker
 
 AppImageLinker is a lightweight background service that automatically integrates AppImage applications into your Linux desktop environment. 
 
 By monitoring specific directories for changes, it automatically creates `.desktop` files and extracts icons whenever a new `.appimage` file is added. When an AppImage is deleted or moved out of the directory, AppImageLinker automatically cleans up the associated shortcut and icon.
 
-## Features
-* **Automatic Integration**: Seamlessly adds AppImages to your application launcher.
-* **Name, Icon & Category Support**: Extracts the native name, icon and application category directly from the AppImage's internal squashfs.
-* **Real-time Monitoring**: Uses `inotify-tools` to instantly detect when AppImages are added, moved, or deleted.
-* **User-Space Daemon**: Runs safely as a systemd user service without requiring root privileges for daily operation.
+## ✨ Features
+- 🔌 **Automatic Integration**: Seamlessly adds AppImages to your application launcher.
 
-## Prerequisites
+- 🖼️ **Name, Icon & Category Support**: Extracts the native name, icon and application category directly from the AppImage's internal squashfs.
 
-AppImageLinker requires `inotify-tools` to monitor directory changes. The installation script will automatically attempt to install this dependency using your system's package manager (`apt`, `dnf`, or `pacman`).
+- ⏱️ **Real-time Monitoring**: Uses `inotify-tools` to instantly detect when AppImages are added, moved, or deleted.
 
-## Configuration
+- 👤 **User-Space Daemon**: Runs safely as a systemd user service without requiring root privileges for daily operation.
+
+
+## 📋 Prerequisites
+
+AppImageLinker requires `inotify-tools` to monitor directory changes. The installation script will automatically attempt to install this dependency using your system's package manager (`apt`, `dnf`, `pacman`, or `zypper`).
+
+## ⚙️ Configuration
 
 By default, the service monitors the `$HOME/AppImages` directory. You can add custom directories to be monitored by editing the configuration file located at:
 
@@ -26,31 +30,30 @@ Simply add the paths to your desired directories within the `DIRS=( ... )` array
    ```
 
 
-## Installation
+## 📥 Installation
 
-1. Clone or download this repository.
-2. Navigate to the repository directory in your terminal.
-3. Make the installer executable and run it:
+1. Clone or download this repository:
+
    ```bash
-   chmod +x install.sh
-   ./install.sh
+   git clone https://www.github.com/oceeNS/AppImageLinker
    ```
+2. Navigate to the repository directory in your terminal and run the install script:
+   ```bash
+   cd AppImageLinker
+   ./install.sh
+   ``` 
 
-## Uninstallation
+## 🗑️ Uninstallation
 
-1. Navigate to AppImageLinker's directory by typing:
+Navigate to AppImageLinker's directory and un the script by typing:
    ```bash
    cd /usr/local/bin/AppImageLinker
-   ```
-2. Make the uninstal script executable and run it:
-   ```bash
-   chmod +x uninstall.sh
    ./uninstall.sh
    ```
 
-Note: If you can't find the uninstall script, you can simply download it from the repository and run it manually (it doesn't matter where you run it from).
+💡 Note: If you can't find the uninstall script, you can simply download it from the repository and run it manually (it doesn't matter where you run it from).
 
 
-## License
+## 📜 License
 
 This project is licensed under the GNU General Public License v3.0 - see the LICENSE file for details.
